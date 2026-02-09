@@ -51,7 +51,7 @@ Players can browse menus, customize items, add extras, place orders, and enjoy a
 1. Download or clone the repository  
 2. Place the folder into your FiveM server’s `resources` directory  
 3. Add the resource to your `server.cfg`
-4. ensure **dingdong-delivery**
+4. `ensure dingdong-delivery`
 5. Make sure **lb-phone** is installed and running  
 6. Restart your server  
 
@@ -116,6 +116,5 @@ This resource is provided as-is.
 You may modify it for your server, but please credit the original author.
 
 ❤️ Credits
-Developer: Colin / ! David
-UI & Logic: Custom-built for immersive RP food delivery
-Phone Integration: lb-phone Custom App Backport
+<br>Developer: ! David
+<br>Phone Integration: lb-phone Custom App Backport
