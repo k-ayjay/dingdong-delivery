@@ -130,20 +130,20 @@ These can be expanded to integrate:
 - Payment systems
 - Inventory systems
 
-🛠️ Requirements
+## 🛠️ Requirements
 - FiveM
 - lb-phone (Custom App Backport)
 - Optional: oxmysql for order logging
 
-🧪 Known Issues / Notes
+## 🧪 Known Issues / Notes
 - UI animations may vary depending on phone theme
 - Delivery system is not included by default (but ready to be added)
 - Ensure modals remain inside .app container for proper z-index behavior
 
-📜 License
+## 📜 License
 This resource is provided as-is.
 You may modify it for your server, but please credit the original author.
 
-❤️ Credits
+## ❤️ Credits
 <br>Developer: ! David
 <br>Phone Integration: lb-phone Custom App Backport
