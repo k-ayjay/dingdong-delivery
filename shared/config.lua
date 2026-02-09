@@ -26,7 +26,6 @@ Config.DefaultItemPrice = 8.00
 -- Edit this list to add/remove items easily.
 Config.Items = {
 	{
-        id = 1,
         name = 'Burger',
         price = 8,
         category = 'burgers',
@@ -47,7 +46,6 @@ Config.Items = {
         }
     },
 	{
-		id = 2,
 		name = 'Pepperoni Pizza',
 		price = 12,
 		category = 'pizza',
@@ -56,7 +54,6 @@ Config.Items = {
 		itemId = 'pizza'
 	},
 	{
-		id = 3,
 		name = 'Cola',
 		price = 3,
 		category = 'drinks',
@@ -65,7 +62,6 @@ Config.Items = {
 		itemId = 'cola'
 	},
 	{
-        id = 4,
         name = 'Water',
         price = 2,
         category = 'drinks',
@@ -81,7 +77,6 @@ Config.Items = {
         extras = {} -- no extras for water
     },
 	{
-		id = 5,
 		name = 'Chocolate Cake',
 		price = 4.99,
 		category = 'desserts',
