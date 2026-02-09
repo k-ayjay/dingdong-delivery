@@ -47,7 +47,8 @@ Players can browse menus, customize items, add extras, place orders, and enjoy a
 ---
 
 ## 🔧 Dependencies
-- **[ESX Framework](https://github.com/esx-framework)**<br>
+- **[ESX Framework](https://github.com/esx-framework)**
+- **[OX_Inventory](https://github.com/overextended/ox_inventory)**
 - **[LB-Phone](https://lbscripts.com/package/phone)**
 
 ## ⚙️ Installation
@@ -143,6 +144,7 @@ These can be expanded to integrate:
 - UI animations may vary depending on phone theme
 - Delivery system is not included by default (but ready to be added)
 - Ensure modals remain inside .app container for proper z-index behavior
+- Currently only supports OX_Inventory, will add support for other inventorys.
 
 ## 📜 License
 This resource is provided as-is.
