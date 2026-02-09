@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>DingDong - Food Ordering</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="colors.css" />
+        <link rel="stylesheet" href="frame.css" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="phone-wrapper">
+            <div class="app" id="content">
+                <!-- Header -->
+                <div class="app-header">
+                    <div class="header-top">
+                        <div class="header-title">
+                            <h1 class="app-title">DingDong</h1>
+                            <span class="location">📍 123 Main St</span>
+                        </div>
+                        <div class="header-icons">
+                            <button class="icon-btn">👤</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search food..." class="search-input" />
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="categories-container">
+                    <div class="categories">
+                        <button class="category-btn active" data-category="all">All</button>
+                        <button class="category-btn" data-category="burgers">Burgers</button>
+                        <button class="category-btn" data-category="pizza">Pizza</button>
+                        <button class="category-btn" data-category="drinks">Drinks</button>
+                        <button class="category-btn" data-category="desserts">Desserts</button>
+                    </div>
+                </div>
+
+                <!-- Food Items Grid -->
+                <div class="content-scroll">
+                    <div class="food-grid">
+                        <!-- Items will be rendered here from Config.Items via food-app.js -->
+                    </div>
+                </div>
+
+                <!-- Floating Cart Button -->
+                <div class="cart-sticky">
+                    <button class="cart-btn" id="cartBtn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Checkout Modal -->
+            <div class="modal" id="checkoutModal">
+                <div class="modal-content">
+                    <button class="modal-close">&times;</button>
+                    <h2 class="modal-title">Order Summary</h2>
+                    
+                    <div class="checkout-section">
+                        <h3>Items</h3>
+                        <div class="cart-items-list" id="cartItemsList">
+                            <!-- Items will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="checkout-section">
+                        <h3>Delivery Details</h3>
+                        <input type="text" id="deliveryNotes" placeholder="Special instructions (optional)" class="delivery-input" />
+                    </div>
+
+                    <div class="checkout-section">
+                        <h3>Order Total</h3>
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Fee:</span>
+                                <span id="deliveryFee">$2.50</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total:</span>
+                                <span id="orderTotal">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-actions">
+                        <button class="checkout-btn secondary" id="backToShoppingBtn">Back to Shopping</button>
+                        <button class="checkout-btn primary" id="confirmOrderBtn">Confirm Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Detail Modal -->
+            <div class="modal" id="itemModal">
+                <div class="modal-content">
+                    <button class="modal-close">&times;</button>
+                    <div class="modal-image">🍔</div>
+                    <h2 class="modal-title">Classic Burger</h2>
+                    <p class="modal-desc">Juicy beef patty with fresh lettuce, tomato, and our special sauce</p>
+                    
+                    <div class="customization">
+                        <h3>Size</h3>
+                        <div class="option-group">
+                            <button class="option-btn active">Small</button>
+                            <button class="option-btn">Medium</button>
+                            <button class="option-btn">Large</button>
+                        </div>
+                    </div>
+
+                    <div class="customization">
+                        <h3>Extras</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" /> Extra Cheese (+$1)
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" /> Bacon (+$2)
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" /> Avocado (+$1.50)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <button class="qty-btn">−</button>
+                        <input type="number" value="1" min="1" class="qty-input" />
+                        <button class="qty-btn">+</button>
+                    </div>
+
+                    <div class="modal-price">
+                        <span>Total: </span>
+                        <span class="total-price">$8.99</span>
+                    </div>
+
+                    <button class="modal-add-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="dev.js"></script>
+        <script src="food-app.js"></script>
+    </body>
+</html>
