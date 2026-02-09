@@ -65,7 +65,7 @@ AddEventHandler('dingdong:server:placeOrder', function(items, meta)
         end
 
         -- Add items to ox_inventory
-        if type(items) == 'table' and exports.ox_inventory then
+        if type(items) == 'table' then
             for _, item in ipairs(items) do
                 local itemId = item.itemId or string.lower(string.gsub(item.name, ' ', '_'))
                 local qty = tonumber(item.quantity) or 1
@@ -81,24 +81,19 @@ AddEventHandler('dingdong:server:placeOrder', function(items, meta)
                 end
             end
         end
-
+--[[ 
         TriggerClientEvent('chat:addMessage', src, {
             args = {"^2DingDong^7", ("Order placed! Total: $%s"):format(tostring(totalPrice))},
             color = {0, 255, 0}
         })
-
+ ]]
         print(("^2[DingDong] ^7Order placed by %s for $%s"):format(xPlayer.getName(), tostring(totalPrice)))
     else
-        TriggerClientEvent('chat:addMessage', src, {
+--[[         TriggerClientEvent('chat:addMessage', src, {
             args = {"^1DingDong^7", ("Insufficient funds! Need: $%s, Have: $%s"):format(tostring(totalPrice), tostring(playerMoney))},
             color = {255, 0, 0}
         })
+]]
         print(("^1[DingDong] ^7Insufficient funds for %s: need $%s, have $%s"):format(xPlayer.getName(), tostring(totalPrice), tostring(playerMoney)))
     end
-end)
-
--- Command to open the app (optional)
-TriggerEvent('chat:addSuggestion', '/dingdong', 'Open the DingDong ordering app')
-RegisterCommand('dingdong', function(source, args, rawCommand)
-    TriggerClientEvent('dingdong:openMenu', source)
 end)

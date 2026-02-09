@@ -65,20 +65,52 @@ Example:
 
 ```lua
 Config.Items = {
-    {
-        name = "Classic Burger",
-        desc = "Juicy beef patty with cheese, lettuce and tomato.",
-        price = 9.99,
-        category = "burgers",
-        icon = "🍔"
+	{
+    id = 1,
+    name = 'Burger',
+    price = 8,
+    category = 'burgers',
+    icon = '🍔',
+    desc = 'Fresh beef with lettuce',
+    itemId = 'burger',
+
+    sizes = {
+        { label = "Small", price = 0 },
+        { label = "Medium", price = 1 },
+        { label = "Large", price = 2 }
     },
-    {
-        name = "Fries",
-        desc = "Crispy golden fries.",
-        price = 3.49,
-        category = "sides",
-        icon = "🍟"
+
+    extras = {
+        { label = "Extra Cheese", price = 1 },
+        { label = "Bacon", price = 2 },
+        { label = "Avocado", price = 1.50 }
     }
+    },
+	{
+		id = 2,
+		name = 'Pepperoni Pizza',
+		price = 12,
+		category = 'pizza',
+		icon = '🍕',
+		desc = 'Large pizza with pepperoni',
+		itemId = 'pizza'
+	},
+	{
+    id = 4,
+    name = 'Water',
+    price = 2,
+    category = 'drinks',
+    icon = 'https://items.bit-scripts.com/images/drinks/water_bottle.png', -- utilize a URL for icons
+    desc = 'Cold refreshing bottle o wahtah',
+    itemId = 'water',
+
+    sizes = {
+        { label = "Bottle", price = 0 },
+        { label = "Large Bottle", price = 1 }
+    },
+
+    extras = {} -- no extras for water
+}
 }
 ```
 You can add unlimited categories and items.

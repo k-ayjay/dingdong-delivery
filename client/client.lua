@@ -178,26 +178,6 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Open menu command
-RegisterNetEvent('dingdong:openMenu')
-AddEventHandler('dingdong:openMenu', function()
-    local xPlayer = ESX.GetPlayerData()
-    print(("^2[DingDong]^7 Menu opened for %s"):format(xPlayer.firstname .. " " .. xPlayer.lastname))
-    -- Ensure UI has latest config when opening
-    if Config then
-        exports["lb-phone"]:SendCustomAppMessage(identifier, {
-            type = "config",
-            config = {
-                ResourceName = GetCurrentResourceName(),
-                DeliveryFee = Config.DeliveryFee,
-                Currency = Config.Currency,
-                EnableCacheBusting = Config.EnableCacheBusting,
-                items = Config.Items,
-                Debug = Config.Debug
-            }
-        })
-    end
-end)
 
 -- Notification handler
 local function sendNotification(message, type)

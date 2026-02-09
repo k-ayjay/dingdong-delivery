@@ -10,7 +10,7 @@ Config.AppName = 'DingDong'
 
 -- Currency / pricing
 Config.Currency = '$'
-Config.DeliveryFee = 2.50
+Config.DeliveryFee = 5.00
 
 -- UI behavior
 Config.CartMaxItems = 100
@@ -20,24 +20,36 @@ Config.CartMaxItems = 100
 Config.EnableCacheBusting = true
 
 -- Defaults for items (can be overridden per-item)
-Config.DefaultItemPrice = 8.99
+Config.DefaultItemPrice = 8.00
 
 -- Items available in the app (id, name, price, category, icon, description)
 -- Edit this list to add/remove items easily.
 Config.Items = {
 	{
-		id = 1,
-		name = 'Classic Burger',
-		price = 8.99,
-		category = 'burgers',
-		icon = '🍔',
-		desc = 'Fresh beef with lettuce',
-		itemId = 'burger'  -- ox_inventory item name
-	},
+        id = 1,
+        name = 'Burger',
+        price = 8,
+        category = 'burgers',
+        icon = '🍔',
+        desc = 'Fresh beef with lettuce',
+        itemId = 'burger',
+
+        sizes = {
+            { label = "Small", price = 0 },
+            { label = "Medium", price = 1 },
+            { label = "Large", price = 2 }
+        },
+
+        extras = {
+            { label = "Extra Cheese", price = 1 },
+            { label = "Bacon", price = 2 },
+            { label = "Avocado", price = 1.50 }
+        }
+    },
 	{
 		id = 2,
 		name = 'Pepperoni Pizza',
-		price = 12.99,
+		price = 12,
 		category = 'pizza',
 		icon = '🍕',
 		desc = 'Large pizza with pepperoni',
@@ -46,14 +58,30 @@ Config.Items = {
 	{
 		id = 3,
 		name = 'Cola',
-		price = 2.99,
+		price = 3,
 		category = 'drinks',
 		icon = '🥤',
 		desc = 'Cold refreshing drink',
 		itemId = 'cola'
 	},
 	{
-		id = 4,
+        id = 4,
+        name = 'Water',
+        price = 2,
+        category = 'drinks',
+        icon = 'https://items.bit-scripts.com/images/drinks/water_bottle.png',
+        desc = 'Cold refreshing bottle o wahtah',
+        itemId = 'water',
+
+        sizes = {
+            { label = "Bottle", price = 0 },
+            { label = "Large Bottle", price = 1 }
+        },
+
+        extras = {} -- no extras for water
+    },
+	{
+		id = 5,
 		name = 'Chocolate Cake',
 		price = 4.99,
 		category = 'desserts',

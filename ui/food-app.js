@@ -1,10 +1,8 @@
 // ======================================================
-// DingDong Delivery - Full Updated JavaScript
-// Includes:
-//  ✔ Quick-add fix (no modal opening)
-//  ✔ Remove-item button with instant re-render
-//  ✔ Safe index handling (no undefined errors)
-//  ✔ All previous fixes (pricing, extras, config, etc.)
+// DingDong Delivery - Dynamic Modal Version (FINAL)
+//  ✔ Per-item sizes & extras (from Config.Items)
+//  ✔ Dynamic image, description, price
+//  ✔ Quick-add, remove-item, live totals
 // ======================================================
 
 // DOM ELEMENTS
@@ -23,7 +21,7 @@ let currentSearchQuery = '';
 let ITEMS = [];
 
 // CONFIG (overwritten by lb-phone)
-let DELIVERY_FEE = 2.50;
+let DELIVERY_FEE = 5.00;
 let RESOURCE_NAME = 'dingdong-delivery';
 let CURRENCY = '$';
 let ENABLE_CACHE_BUSTING = true;
@@ -124,7 +122,7 @@ function showCheckout() {
             <div class="cart-item-meta">
                 <span class="cart-item-qty">Qty: ${item.quantity}</span>
                 <span class="cart-item-size">${item.size}</span>
-                ${item.extras.length > 0 ? `<div class="cart-item-extras">Extras: ${item.extras.join(', ')}</div>` : ''}
+                ${item.extras && item.extras.length > 0 ? `<div class="cart-item-extras">Extras: ${item.extras.join(', ')}</div>` : ''}
             </div>
         `;
         newList.appendChild(div);
@@ -142,26 +140,22 @@ function showCheckout() {
 
     checkoutModal.classList.add('active');
 
-    // ======================================================
-    // REMOVE ITEM HANDLERS (fresh listeners)
-    // ======================================================
+    // REMOVE ITEM HANDLERS
     newList.querySelectorAll('.remove-item-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const index = Number(e.target.dataset.index);
-
             if (isNaN(index) || !cart[index]) return;
 
             const removed = cart.splice(index, 1)[0];
             cartCount -= removed.quantity;
-
             document.querySelector('.cart-count').textContent = cartCount;
 
             if (cart.length === 0) {
                 checkoutModal.classList.remove('active');
                 return;
             }
-            
-            checkoutModal.offsetHeight;
+
+            checkoutModal.offsetHeight; // force reflow
             showCheckout();
         });
     });
@@ -231,25 +225,40 @@ if (confirmBtn) {
 }
 
 // ======================================================
-// ITEM MODAL
+// ITEM MODAL (DYNAMIC)
 // ======================================================
-function updateModal(name, price, itemId) {
-    const title = itemModal.querySelector('.modal-title');
-    const priceEl = itemModal.querySelector('.total-price');
-    const btn = itemModal.querySelector('.modal-add-btn');
-
-    const numericPrice = parseFloat(price.replace(CURRENCY, ''));
-
-    if (title) title.textContent = name;
-    if (priceEl) priceEl.textContent = `${CURRENCY}${numericPrice.toFixed(2)}`;
-    if (btn) btn.dataset.itemId = itemId;
-
-    itemModal.dataset.basePrice = numericPrice;
-}
-
-// Quantity
 const qtyInput = itemModal.querySelector('.qty-input');
 const qtyBtns = itemModal.querySelectorAll('.qty-btn');
+
+function getSizeAndExtrasSections() {
+    const customizations = itemModal.querySelectorAll('.customization');
+    const sizeSection = customizations[0] || null;
+    const extrasSection = customizations[1] || null;
+    const sizeGroup = sizeSection ? sizeSection.querySelector('.option-group') : null;
+    const extrasGroup = extrasSection ? extrasSection.querySelector('.checkbox-group') : null;
+    return { sizeSection, extrasSection, sizeGroup, extrasGroup };
+}
+
+function updatePrice() {
+    const base = parseFloat(itemModal.dataset.basePrice) || 0;
+    const qty = parseInt(qtyInput.value) || 1;
+
+    let sizeExtra = 0;
+    const activeSize = itemModal.querySelector('.option-btn.active');
+    if (activeSize && activeSize.dataset.price) {
+        sizeExtra = parseFloat(activeSize.dataset.price) || 0;
+    }
+
+    let extras = 0;
+    itemModal.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
+        const p = parseFloat(cb.dataset.price || '0');
+        extras += p;
+    });
+
+    const total = (base + sizeExtra + extras) * qty;
+    const priceEl = itemModal.querySelector('.total-price');
+    if (priceEl) priceEl.textContent = `${CURRENCY}${total.toFixed(2)}`;
+}
 
 if (qtyBtns.length >= 2) {
     qtyBtns[0].addEventListener('click', () => {
@@ -265,78 +274,130 @@ if (qtyBtns.length >= 2) {
 
 if (qtyInput) qtyInput.addEventListener('change', updatePrice);
 
-// Size buttons
-itemModal.querySelectorAll('.option-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        updatePrice();
-    });
-});
+function updateModal(itemIndex) {
+    const item = ITEMS[itemIndex];
+    if (!item) return;
 
-// Extras
-itemModal.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', updatePrice);
-});
-
-// Price calculation
-function updatePrice() {
-    const base = parseFloat(itemModal.dataset.basePrice) || 0;
-    const qty = parseInt(qtyInput.value) || 1;
-
-    let extras = 0;
-    itemModal.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
-        const text = cb.parentElement.textContent;
-        const match = text.match(/\$(\d+(\.\d+)?)/);
-        if (match) extras += parseFloat(match[1]);
-    });
-
-    const total = (base + extras) * qty;
+    const titleEl = itemModal.querySelector('.modal-title');
+    const descEl = itemModal.querySelector('.modal-desc');
+    const imgEl = itemModal.querySelector('.modal-image');
     const priceEl = itemModal.querySelector('.total-price');
-    if (priceEl) priceEl.textContent = `${CURRENCY}${total.toFixed(2)}`;
+    const addBtn = itemModal.querySelector('.modal-add-btn');
+
+    if (titleEl) titleEl.textContent = item.name || '';
+    if (descEl) descEl.textContent = item.desc || '';
+
+    if (imgEl) {
+        if (item.icon && typeof item.icon === 'string' && item.icon.startsWith('http')) {
+            imgEl.style.backgroundImage = `url(${item.icon})`;
+            imgEl.textContent = '';
+        } else {
+            imgEl.style.backgroundImage = '';
+            imgEl.textContent = item.icon || '🍽️';
+        }
+    }
+
+    const basePrice = parseFloat(item.price) || 0;
+    itemModal.dataset.basePrice = basePrice;
+    if (priceEl) priceEl.textContent = `${CURRENCY}${basePrice.toFixed(2)}`;
+
+    qtyInput.value = 1;
+
+    const { sizeSection, extrasSection, sizeGroup, extrasGroup } = getSizeAndExtrasSections();
+
+    // Sizes (per-item only)
+    if (sizeSection && sizeGroup) {
+        sizeGroup.innerHTML = '';
+        if (Array.isArray(item.sizes) && item.sizes.length > 0) {
+            sizeSection.style.display = '';
+            item.sizes.forEach((sz, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                if (idx === 0) btn.classList.add('active');
+                btn.textContent = (sz.label || '').toUpperCase();
+                btn.dataset.price = sz.price || 0;
+                btn.addEventListener('click', () => {
+                    sizeGroup.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updatePrice();
+                });
+                sizeGroup.appendChild(btn);
+            });
+        } else {
+            sizeSection.style.display = 'none';
+        }
+    }
+
+    // Extras (per-item only)
+    if (extrasSection && extrasGroup) {
+        extrasGroup.innerHTML = '';
+        if (Array.isArray(item.extras) && item.extras.length > 0) {
+            extrasSection.style.display = '';
+            item.extras.forEach(ext => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.dataset.price = ext.price || 0;
+                input.addEventListener('change', updatePrice);
+
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(` ${ext.label} (+${CURRENCY}${(ext.price || 0).toFixed(2)})`));
+                extrasGroup.appendChild(label);
+            });
+        } else {
+            extrasSection.style.display = 'none';
+        }
+    }
+
+    if (addBtn) addBtn.dataset.itemIndex = itemIndex;
+
+    updatePrice();
 }
 
 // Add to cart
 const addToCartBtn = itemModal.querySelector('.modal-add-btn');
 if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
-        const qty = parseInt(qtyInput.value);
-        const name = itemModal.querySelector('.modal-title').textContent;
-        const price = parseFloat(itemModal.querySelector('.total-price').textContent.replace(CURRENCY, ''));
-        const id = addToCartBtn.dataset.itemId;
+        const itemIndex = Number(addToCartBtn.dataset.itemIndex);
+        const item = ITEMS[itemIndex];
+        if (!item) return;
+
+        const qty = parseInt(qtyInput.value) || 1;
+        const totalPrice = parseFloat(itemModal.querySelector('.total-price').textContent.replace(CURRENCY, '')) || 0;
+        const unitPrice = totalPrice / qty;
 
         const extras = [];
         itemModal.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
-            extras.push(cb.parentElement.textContent.trim());
+            const label = cb.parentElement.textContent.trim();
+            extras.push(label);
         });
 
-        const sizeBtn = itemModal.querySelector('.option-btn.active');
-        const size = sizeBtn ? sizeBtn.textContent : 'Default';
+        let sizeLabel = 'Default';
+        const activeSize = itemModal.querySelector('.option-btn.active');
+        if (activeSize) sizeLabel = activeSize.textContent.trim();
 
-        const item = {
-            id,
-            name,
+        const cartItem = {
+            id: item.id || itemIndex,
+            name: item.name,
             quantity: qty,
-            price,
-            size,
+            price: unitPrice,
+            size: sizeLabel,
             extras,
-            totalPrice: price * qty
+            totalPrice
         };
 
-        cart.push(item);
+        cart.push(cartItem);
         cartCount += qty;
         document.querySelector('.cart-count').textContent = cartCount;
 
-        fetchNui('addToCart', item);
+        fetchNui('addToCart', cartItem);
 
         addToCartBtn.textContent = '✓ Added!';
         setTimeout(() => {
             addToCartBtn.textContent = 'Add to Cart';
             itemModal.classList.remove('active');
-            qtyInput.value = 1;
-            itemModal.querySelectorAll('.checkbox-item input').forEach(cb => cb.checked = false);
-            itemModal.querySelectorAll('.option-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
-            updatePrice();
         }, 800);
     });
 }
@@ -363,11 +424,15 @@ document.addEventListener('click', e => {
     const addBtn = e.target.closest('.add-btn');
     if (addBtn) {
         const card = addBtn.closest('.food-card');
-        const name = card.querySelector('.food-name').textContent;
-        const price = parseFloat(card.querySelector('.food-price').textContent.replace(CURRENCY, ''));
+        const index = Number(card.dataset.index);
+        const item = ITEMS[index];
+        if (!item) return;
+
+        const name = item.name;
+        const price = parseFloat(item.price) || 0;
 
         cart.push({
-            id: Array.from(document.querySelectorAll('.food-card')).indexOf(card),
+            id: item.id || index,
             name,
             quantity: 1,
             price,
@@ -382,17 +447,14 @@ document.addEventListener('click', e => {
         setTimeout(() => addBtn.textContent = '+', 500);
 
         fetchNui('quickAddItem', { name, price });
-        return; // IMPORTANT: prevents modal from opening
+        return;
     }
 
     // CARD CLICK — OPEN MODAL
     const card = e.target.closest('.food-card');
     if (card && card.style.display !== 'none') {
-        const name = card.querySelector('.food-name').textContent;
-        const price = card.querySelector('.food-price').textContent;
-        const index = Array.from(document.querySelectorAll('.food-card')).indexOf(card);
-
-        updateModal(name, price, index);
+        const index = Number(card.dataset.index);
+        updateModal(index);
         itemModal.classList.add('active');
     }
 });
@@ -406,16 +468,17 @@ function renderFoodItems(items) {
 
     grid.innerHTML = '';
 
-    items.forEach(item => {
+    items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'food-card';
         card.dataset.category = item.category || 'all';
         card.dataset.name = item.name || '';
+        card.dataset.index = index;
 
         const img = document.createElement('div');
         img.className = 'food-image';
 
-        if (item.icon?.startsWith('http')) {
+        if (item.icon && typeof item.icon === 'string' && item.icon.startsWith('http')) {
             img.style.backgroundImage = `url(${item.icon})`;
         } else {
             img.textContent = item.icon || '🍽️';
@@ -474,6 +537,7 @@ window.addEventListener('message', event => {
         DELIVERY_FEE = typeof cfg.DeliveryFee === 'number' ? cfg.DeliveryFee : DELIVERY_FEE;
         CURRENCY = cfg.Currency || CURRENCY;
         ENABLE_CACHE_BUSTING = typeof cfg.EnableCacheBusting === 'boolean' ? cfg.EnableCacheBusting : ENABLE_CACHE_BUSTING;
+        DEBUG = cfg.Debug?.Enabled || false;
 
         if (Array.isArray(cfg.items)) {
             ITEMS = cfg.items;
@@ -495,7 +559,7 @@ window.addEventListener('message', event => {
         cartCount = 0;
         currentCategory = 'all';
         currentSearchQuery = '';
-        searchInput.value = '';
+        if (searchInput) searchInput.value = '';
         categoryBtns.forEach((btn, i) => btn.classList.toggle('active', i === 0));
         filterFoodItems();
     }
@@ -518,6 +582,7 @@ fetchNui('requestConfig').then(resp => {
         DELIVERY_FEE = typeof cfg.DeliveryFee === 'number' ? cfg.DeliveryFee : DELIVERY_FEE;
         CURRENCY = cfg.Currency || CURRENCY;
         ENABLE_CACHE_BUSTING = typeof cfg.EnableCacheBusting === 'boolean' ? cfg.EnableCacheBUSTING : ENABLE_CACHE_BUSTING;
+        DEBUG = cfg.Debug?.Enabled || false;
 
         if (Array.isArray(cfg.items)) {
             ITEMS = cfg.items;
@@ -529,5 +594,5 @@ fetchNui('requestConfig').then(resp => {
     }
 });
 
-// Initial price update
+// Initial price update (safe no-op until modal used)
 updatePrice();
