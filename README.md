@@ -66,24 +66,24 @@ Example:
 ```lua
 Config.Items = {
 	{
-    name = 'Burger',
-    price = 8,
-    category = 'burgers',
-    icon = '🍔',
-    desc = 'Fresh beef with lettuce',
-    itemId = 'burger',
+	    name = 'Burger',
+	    price = 8,
+	    category = 'burgers',
+	    icon = '🍔',
+	    desc = 'Fresh beef with lettuce',
+	    itemId = 'burger',
+	
+	    sizes = {
+	        { label = "Small", price = 0 },
+	        { label = "Medium", price = 1 },
+	        { label = "Large", price = 2 }
+    	},
 
-    sizes = {
-        { label = "Small", price = 0 },
-        { label = "Medium", price = 1 },
-        { label = "Large", price = 2 }
-    },
-
-    extras = {
-        { label = "Extra Cheese", price = 1 },
-        { label = "Bacon", price = 2 },
-        { label = "Avocado", price = 1.50 }
-    }
+	    extras = {
+	        { label = "Extra Cheese", price = 1 },
+	        { label = "Bacon", price = 2 },
+	        { label = "Avocado", price = 1.50 }
+	    }
     },
 	{
 		name = 'Pepperoni Pizza',
@@ -94,21 +94,21 @@ Config.Items = {
 		itemId = 'pizza'
 	},
 	{
-    name = 'Water',
-    price = 2,
-    category = 'drinks',
-    icon = 'https://items.bit-scripts.com/images/drinks/water_bottle.png', -- utilize a URL for icons
-    desc = 'Cold refreshing bottle o wahtah',
-    itemId = 'water',
-
-    sizes = {
-        { label = "Bottle", price = 0 },
-        { label = "Large Bottle", price = 1 }
-    },
-
-    extras = {} -- no extras for water
-}
-}
+	    name = 'Water',
+	    price = 2,
+	    category = 'drinks',
+	    icon = 'https://items.bit-scripts.com/images/drinks/water_bottle.png', -- utilize a URL for icons
+	    desc = 'Cold refreshing bottle o wahtah',
+	    itemId = 'water',
+	
+	    sizes = {
+	        { label = "Bottle", price = 0 },
+	        { label = "Large Bottle", price = 1 }
+	    },
+	
+	    extras = {} -- no extras for water
+		}
+	}
 ```
 You can add unlimited categories and items.
 
