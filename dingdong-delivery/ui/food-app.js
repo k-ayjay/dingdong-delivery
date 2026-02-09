@@ -1,10 +1,3 @@
-// ======================================================
-// DingDong Delivery - Dynamic Modal Version (FINAL)
-//  ✔ Per-item sizes & extras (from Config.Items)
-//  ✔ Dynamic image, description, price
-//  ✔ Quick-add, remove-item, live totals
-// ======================================================
-
 // DOM ELEMENTS
 const cartBtn = document.getElementById('cartBtn');
 const itemModal = document.getElementById('itemModal');
@@ -92,13 +85,9 @@ if (searchInput) {
 function showCheckout() {
     if (cartCount <= 0) return;
 
-    const cartItemsList =
-        checkoutModal.querySelector('#cartItemsList') ||
-        checkoutModal.querySelector('.cart-items-list');
+    const cartItemsList = checkoutModal.querySelector('#cartItemsList') || checkoutModal.querySelector('.cart-items-list');
 
     if (!cartItemsList) return;
-
-    // Clear old listeners by cloning the container
     const newList = cartItemsList.cloneNode(false);
     cartItemsList.parentNode.replaceChild(newList, cartItemsList);
 
@@ -140,7 +129,6 @@ function showCheckout() {
 
     checkoutModal.classList.add('active');
 
-    // REMOVE ITEM HANDLERS
     newList.querySelectorAll('.remove-item-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const index = Number(e.target.dataset.index);
@@ -155,7 +143,7 @@ function showCheckout() {
                 return;
             }
 
-            checkoutModal.offsetHeight; // force reflow
+            checkoutModal.offsetHeight;
             showCheckout();
         });
     });
@@ -305,7 +293,7 @@ function updateModal(itemIndex) {
 
     const { sizeSection, extrasSection, sizeGroup, extrasGroup } = getSizeAndExtrasSections();
 
-    // Sizes (per-item only)
+    // Sizes
     if (sizeSection && sizeGroup) {
         sizeGroup.innerHTML = '';
         if (Array.isArray(item.sizes) && item.sizes.length > 0) {
@@ -328,7 +316,7 @@ function updateModal(itemIndex) {
         }
     }
 
-    // Extras (per-item only)
+    // Extras
     if (extrasSection && extrasGroup) {
         extrasGroup.innerHTML = '';
         if (Array.isArray(item.extras) && item.extras.length > 0) {
@@ -450,7 +438,6 @@ document.addEventListener('click', e => {
         return;
     }
 
-    // CARD CLICK — OPEN MODAL
     const card = e.target.closest('.food-card');
     if (card && card.style.display !== 'none') {
         const index = Number(card.dataset.index);
@@ -594,5 +581,4 @@ fetchNui('requestConfig').then(resp => {
     }
 });
 
-// Initial price update (safe no-op until modal used)
 updatePrice();

@@ -1,7 +1,5 @@
--- DingDong Delivery - ESX Server (server-side events)
 ESX = exports["es_extended"]:getSharedObject()
 
--- Simple server-side logging endpoints the client can call
 RegisterNetEvent('dingdong:server:addToCart')
 AddEventHandler('dingdong:server:addToCart', function(data)
     local src = source
@@ -81,19 +79,8 @@ AddEventHandler('dingdong:server:placeOrder', function(items, meta)
                 end
             end
         end
---[[ 
-        TriggerClientEvent('chat:addMessage', src, {
-            args = {"^2DingDong^7", ("Order placed! Total: $%s"):format(tostring(totalPrice))},
-            color = {0, 255, 0}
-        })
- ]]
         print(("^2[DingDong] ^7Order placed by %s for $%s"):format(xPlayer.getName(), tostring(totalPrice)))
     else
---[[         TriggerClientEvent('chat:addMessage', src, {
-            args = {"^1DingDong^7", ("Insufficient funds! Need: $%s, Have: $%s"):format(tostring(totalPrice), tostring(playerMoney))},
-            color = {255, 0, 0}
-        })
-]]
         print(("^1[DingDong] ^7Insufficient funds for %s: need $%s, have $%s"):format(xPlayer.getName(), tostring(totalPrice), tostring(playerMoney)))
     end
 end)

@@ -1,4 +1,3 @@
--- DingDong Delivery - ESX Client
 ESX = exports["es_extended"]:getSharedObject()
 
 local identifier = "dingdong-delivery"
@@ -13,7 +12,7 @@ local function addApp()
     local added, errorMessage = exports["lb-phone"]:AddCustomApp({
         identifier = identifier,
         name = "DingDong",
-        description = "[In Dev] Order delicious food and have it delivered to your location!",
+        description = "Order delicious food and have it delivered to your location!",
         developer = "! David",
         defaultApp = false,
         game = false,
@@ -119,7 +118,7 @@ RegisterNUICallback('placeOrder', function(data, cb)
     cb({success = true})
 end)
 
--- Allow the UI to request the current config via NUI
+-- Handle config requests from NUI
 RegisterNUICallback('requestConfig', function(data, cb)
     if Config then
         cb({
