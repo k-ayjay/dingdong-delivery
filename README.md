@@ -80,7 +80,7 @@ Config.Items = {
         icon = "🍟"
     }
 }
-
+```
 You can add unlimited categories and items.
 
 🔌 Exports & Events
