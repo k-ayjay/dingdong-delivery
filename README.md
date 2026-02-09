@@ -47,8 +47,8 @@ Players can browse menus, customize items, add extras, place orders, and enjoy a
 ---
 
 ## 🔧 Dependencies
-**-[ESX Framework](https://github.com/esx-framework)**<br>
-**-[LB-Phone](https://lbscripts.com/package/phone)**
+-**[ESX Framework](https://github.com/esx-framework)**<br>
+-**[LB-Phone](https://lbscripts.com/package/phone)**
 
 ## ⚙️ Installation
 
