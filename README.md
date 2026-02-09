@@ -66,7 +66,6 @@ Example:
 ```lua
 Config.Items = {
 	{
-    id = 1,
     name = 'Burger',
     price = 8,
     category = 'burgers',
@@ -87,7 +86,6 @@ Config.Items = {
     }
     },
 	{
-		id = 2,
 		name = 'Pepperoni Pizza',
 		price = 12,
 		category = 'pizza',
@@ -96,7 +94,6 @@ Config.Items = {
 		itemId = 'pizza'
 	},
 	{
-    id = 4,
     name = 'Water',
     price = 2,
     category = 'drinks',
