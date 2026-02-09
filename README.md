@@ -42,7 +42,15 @@ Players can browse menus, customize items, add extras, place orders, and enjoy a
   - Description  
   - Price  
   - Category  
-  - Icon (emoji or URL)  
+  - Icon (emoji or URL)
+    
+---
+
+ ## 📷 Screenshots
+- <img width="322" height="656" alt="image" src="https://github.com/user-attachments/assets/03821766-366c-4ff0-b076-3ad1357a2693" /><br>
+- <img width="329" height="655" alt="image" src="https://github.com/user-attachments/assets/6e37d5c5-841b-4136-9661-670cd20fe455" /><br>
+- <img width="325" height="660" alt="image" src="https://github.com/user-attachments/assets/fe670451-a96e-44d3-ac96-8cb92ae559de" /><br>
+- <img width="328" height="651" alt="image" src="https://github.com/user-attachments/assets/fcb01631-c7e5-4b67-b260-3c2b88e2ce9c" />
 
 ---
 
