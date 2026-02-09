@@ -1,4 +1,4 @@
-# 🍔 DingDong Delivery  
+# 🍔 DingDong Delivery  -  ESX
 A fully interactive food‑ordering app for **lb‑phone** on FiveM.  
 Players can browse menus, customize items, add extras, place orders, and enjoy a clean, modern UI built for immersive RP servers.
 
@@ -45,6 +45,10 @@ Players can browse menus, customize items, add extras, place orders, and enjoy a
   - Icon (emoji or URL)  
 
 ---
+
+## 🔧 Dependencies
+**[ESX Framework](https://github.com/esx-framework)**
+**[LB-Phone](https://lbscripts.com/package/phone)**
 
 ## ⚙️ Installation
 
