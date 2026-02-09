@@ -16,6 +16,13 @@ body {
     width: 100%;
     height: 100%;
     overflow: visible !important;
+    pointer-events: none;
+    opacity: 0;
+}
+
+body.app-visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .app {
@@ -27,16 +34,7 @@ body {
     font-family: 'Poppins', sans-serif;
     color: var(--text-primary);
     position: relative;
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s, visibility 0.3s;
-}
-
-body.app-visible .app {
     visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
 }
 
 /* Header Styles */
@@ -286,6 +284,30 @@ body.app-visible .app {
 
 .add-btn:active {
     background: #E55A5A;
+}
+
+.remove-item-btn {
+    background: #ff4d4d;
+    border: none;
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.remove-item-btn:hover {
+    background: #d93636;
 }
 
 /* Floating Cart */

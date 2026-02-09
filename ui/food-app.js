@@ -1,15 +1,16 @@
 // ======================================================
 // DingDong Delivery - Full Updated JavaScript
-// All fixes applied: pricing, cart logic, modal logic,
-// extras parsing, NUI safety, config injection, filtering.
+// Includes:
+//  ✔ Quick-add fix (no modal opening)
+//  ✔ Remove-item button with instant re-render
+//  ✔ Safe index handling (no undefined errors)
+//  ✔ All previous fixes (pricing, extras, config, etc.)
 // ======================================================
 
 // DOM ELEMENTS
 const cartBtn = document.getElementById('cartBtn');
 const itemModal = document.getElementById('itemModal');
 const checkoutModal = document.getElementById('checkoutModal');
-const modalClose = document.querySelector('.modal-close');
-const foodCards = document.querySelectorAll('.food-card');
 const categoryBtns = document.querySelectorAll('.category-btn');
 const searchInput = document.querySelector('.search-input');
 const locationDisplay = document.querySelector('.location');
@@ -99,11 +100,14 @@ function showCheckout() {
 
     if (!cartItemsList) return;
 
-    cartItemsList.innerHTML = '';
+    // Clear old listeners by cloning the container
+    const newList = cartItemsList.cloneNode(false);
+    cartItemsList.parentNode.replaceChild(newList, cartItemsList);
 
     let subtotal = 0;
 
-    cart.forEach(item => {
+    cart.forEach((item, index) => {
+        const safeIndex = index;
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
 
@@ -112,7 +116,10 @@ function showCheckout() {
         div.innerHTML = `
             <div class="cart-item-row">
                 <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">${CURRENCY}${itemTotal.toFixed(2)}</div>
+                <div class="cart-item-actions">
+                    <div class="cart-item-price">${CURRENCY}${itemTotal.toFixed(2)}</div>
+                    <button class="remove-item-btn" data-index="${safeIndex}">🗑️</button>
+                </div>
             </div>
             <div class="cart-item-meta">
                 <span class="cart-item-qty">Qty: ${item.quantity}</span>
@@ -120,7 +127,7 @@ function showCheckout() {
                 ${item.extras.length > 0 ? `<div class="cart-item-extras">Extras: ${item.extras.join(', ')}</div>` : ''}
             </div>
         `;
-        cartItemsList.appendChild(div);
+        newList.appendChild(div);
     });
 
     const total = subtotal + DELIVERY_FEE;
@@ -134,6 +141,30 @@ function showCheckout() {
     if (feeEl) feeEl.textContent = `${CURRENCY}${DELIVERY_FEE.toFixed(2)}`;
 
     checkoutModal.classList.add('active');
+
+    // ======================================================
+    // REMOVE ITEM HANDLERS (fresh listeners)
+    // ======================================================
+    newList.querySelectorAll('.remove-item-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = Number(e.target.dataset.index);
+
+            if (isNaN(index) || !cart[index]) return;
+
+            const removed = cart.splice(index, 1)[0];
+            cartCount -= removed.quantity;
+
+            document.querySelector('.cart-count').textContent = cartCount;
+
+            if (cart.length === 0) {
+                checkoutModal.classList.remove('active');
+                return;
+            }
+            
+            checkoutModal.offsetHeight;
+            showCheckout();
+        });
+    });
 }
 
 if (cartBtn) {
@@ -145,12 +176,12 @@ if (cartBtn) {
 // ======================================================
 // MODAL CLOSE
 // ======================================================
-if (modalClose) {
-    modalClose.addEventListener('click', () => {
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
         itemModal.classList.remove('active');
         checkoutModal.classList.remove('active');
     });
-}
+});
 
 itemModal.addEventListener('click', e => {
     if (e.target === itemModal) itemModal.classList.remove('active');
@@ -188,7 +219,7 @@ if (confirmBtn) {
             if (resp?.success) {
                 confirmBtn.textContent = '✓ Order Placed!';
                 setTimeout(() => {
-                    confirmBtn.textContent = 'Checkout';
+                    confirmBtn.textContent = 'Confirm Order';
                     checkoutModal.classList.remove('active');
                     cart = [];
                     cartCount = 0;
@@ -222,8 +253,7 @@ const qtyBtns = itemModal.querySelectorAll('.qty-btn');
 
 if (qtyBtns.length >= 2) {
     qtyBtns[0].addEventListener('click', () => {
-        const val = Math.max(1, parseInt(qtyInput.value) - 1);
-        qtyInput.value = val;
+        qtyInput.value = Math.max(1, parseInt(qtyInput.value) - 1);
         updatePrice();
     });
 
@@ -301,7 +331,7 @@ if (addToCartBtn) {
 
         addToCartBtn.textContent = '✓ Added!';
         setTimeout(() => {
-            addToCartBtn.textContent = 'Add';
+            addToCartBtn.textContent = 'Add to Cart';
             itemModal.classList.remove('active');
             qtyInput.value = 1;
             itemModal.querySelectorAll('.checkbox-item input').forEach(cb => cb.checked = false);
@@ -325,22 +355,13 @@ categoryBtns.forEach(btn => {
 });
 
 // ======================================================
-// FOOD CARD CLICK HANDLING
+// FOOD CARD CLICK HANDLING (WITH QUICK-ADD FIX)
 // ======================================================
 document.addEventListener('click', e => {
-    const card = e.target.closest('.food-card');
-    if (card && card.style.display !== 'none') {
-        const name = card.querySelector('.food-name').textContent;
-        const price = card.querySelector('.food-price').textContent;
-        const index = Array.from(document.querySelectorAll('.food-card')).indexOf(card);
 
-        updateModal(name, price, index);
-        itemModal.classList.add('active');
-    }
-
+    // QUICK ADD BUTTON — ONLY ADD TO CART, DO NOT OPEN MODAL
     const addBtn = e.target.closest('.add-btn');
     if (addBtn) {
-        e.stopPropagation();
         const card = addBtn.closest('.food-card');
         const name = card.querySelector('.food-name').textContent;
         const price = parseFloat(card.querySelector('.food-price').textContent.replace(CURRENCY, ''));
@@ -361,6 +382,18 @@ document.addEventListener('click', e => {
         setTimeout(() => addBtn.textContent = '+', 500);
 
         fetchNui('quickAddItem', { name, price });
+        return; // IMPORTANT: prevents modal from opening
+    }
+
+    // CARD CLICK — OPEN MODAL
+    const card = e.target.closest('.food-card');
+    if (card && card.style.display !== 'none') {
+        const name = card.querySelector('.food-name').textContent;
+        const price = card.querySelector('.food-price').textContent;
+        const index = Array.from(document.querySelectorAll('.food-card')).indexOf(card);
+
+        updateModal(name, price, index);
+        itemModal.classList.add('active');
     }
 });
 
@@ -484,7 +517,7 @@ fetchNui('requestConfig').then(resp => {
         RESOURCE_NAME = cfg.ResourceName || RESOURCE_NAME;
         DELIVERY_FEE = typeof cfg.DeliveryFee === 'number' ? cfg.DeliveryFee : DELIVERY_FEE;
         CURRENCY = cfg.Currency || CURRENCY;
-        ENABLE_CACHE_BUSTING = typeof cfg.EnableCacheBusting === 'boolean' ? cfg.EnableCacheBusting : ENABLE_CACHE_BUSTING;
+        ENABLE_CACHE_BUSTING = typeof cfg.EnableCacheBusting === 'boolean' ? cfg.EnableCacheBUSTING : ENABLE_CACHE_BUSTING;
 
         if (Array.isArray(cfg.items)) {
             ITEMS = cfg.items;
